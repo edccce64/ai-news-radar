@@ -56,9 +56,18 @@
 > ⚠️ Windows 上 PATH 里的 `python` 可能是微软商店的 0 字节占位符，直接敲 `python` 会静默失败。
 > 建好虚拟环境后一律用 `.venv\Scripts\python.exe` 执行，**不要激活**（执行策略会拦）。
 
+Windows（PowerShell）：
+
 ```powershell
 python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+Linux / macOS（bash）：
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
 ```
 
 ### 2. 配置密钥
@@ -66,6 +75,10 @@ python -m venv .venv
 ```powershell
 copy .env.example .env
 # 用编辑器打开 .env 填真值，保存为 UTF-8 无 BOM（PowerShell 的 Out-File 会带 BOM）
+```
+
+```bash
+cp .env.example .env
 ```
 
 | 变量 | 必填 | 说明 |
@@ -90,6 +103,19 @@ copy .env.example .env
 .venv\Scripts\python.exe main.py --test-push
 
 # 不想切目录的话，双击项目根目录的 test-push.bat 即可
+```
+
+Linux / macOS：
+
+```bash
+# 全链路，不推送、不写库（看加工结果）
+.venv/bin/python main.py --dry-run
+
+# 全链路，真推送 + 写 SQLite
+.venv/bin/python main.py
+
+# 只发一条测试消息到飞书群（验证 webhook 与签名都通）
+.venv/bin/python main.py --test-push
 ```
 
 ---
@@ -161,7 +187,14 @@ gh repo create <owner>/<repo> --public --source=. --remote=origin --push
 .\set-secrets.ps1 -Repo <owner>/<repo>   # 或显式指定
 ```
 
-它会把 `.env` 里的值写进 GitHub Secrets（值经 stdin 传递，不进命令行、不进历史）。
+Linux / macOS 用同名脚本：
+
+```bash
+./set-secrets.sh                     # 自动识别当前仓库
+./set-secrets.sh <owner>/<repo>      # 或显式指定
+```
+
+两个脚本都会把 `.env` 里的值写进 GitHub Secrets（值经 stdin 传递，不进命令行、不进历史）。
 
 > `GITHUB_TOKEN` **不用配**，Actions 每次运行自动提供。
 
@@ -252,11 +285,12 @@ gh workflow run daily.yml -R <owner>/<repo>
 |---|---|
 | `.env` / `.env.example` | 密钥（`.env` 不入库）与配置模板 |
 | `requirements.txt` | 运行时依赖（已 pin 版本） |
+| `requirements-dev.txt` | 开发依赖（ruff，版本已 pin，与 CI 一致） |
 | `pyproject.toml` | ruff 静态检查与格式化规则 |
 | `.editorconfig` / `.gitattributes` | 缩进、换行符、编码的统一约定 |
-| `set-secrets.ps1` | 一次性把 `.env` 的值写进 GitHub Secrets |
-| `set-feishu-secret.ps1` | 单独写入飞书签名秘钥到 `.env` + GitHub Secret（终端输入不回显） |
-| `test-push.bat` | 双击就往群里发一条测试消息（不用切目录） |
+| `set-secrets.ps1` / `set-secrets.sh` | 一次性把 `.env` 的值写进 GitHub Secrets（Windows / Linux、macOS） |
+| `set-feishu-secret.ps1` | 单独写入飞书签名秘钥到 `.env` + GitHub Secret（终端输入不回显，Windows） |
+| `test-push.bat` | 双击就往群里发一条测试消息（不用切目录，Windows） |
 | `CONTRIBUTING.md` / `SECURITY.md` / `CHANGELOG.md` | 贡献指南 / 安全策略 / 变更记录 |
 | `.github/workflows/` | `daily.yml`（定时推送）、`tests.yml`（push 跑单测） |
 
@@ -326,12 +360,24 @@ gh workflow run daily.yml -R <owner>/<repo>
 .venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-静态检查与格式化用 [ruff](https://docs.astral.sh/ruff/)（不在运行时依赖里，规则写在 `pyproject.toml`）：
+```bash
+.venv/bin/python -m unittest discover -s tests -v
+```
+
+静态检查与格式化用 [ruff](https://docs.astral.sh/ruff/)。规则写在 `pyproject.toml`，版本固定在 `requirements-dev.txt`：
 
 ```powershell
-pip install ruff
-ruff check .      # 检查（行宽 100、py310 目标）
-ruff format .     # 统一格式
+.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.venv\Scripts\python.exe -m ruff check .          # 检查（行宽 100、py310 目标）
+.venv\Scripts\python.exe -m ruff format --check . # 只检查格式，CI 用这条
+.venv\Scripts\python.exe -m ruff format .         # 实际格式化
+```
+
+```bash
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m ruff check .
+.venv/bin/python -m ruff format --check .
+.venv/bin/python -m ruff format .
 ```
 
 贡献前请读 [CONTRIBUTING.md](CONTRIBUTING.md)。

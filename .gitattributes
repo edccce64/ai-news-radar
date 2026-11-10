@@ -1,3 +1,6 @@
+# Shell 脚本必须 LF，换行里带 \r 会在 Linux / macOS 上报 bad interpreter
+*.sh text eol=lf
+
 # PowerShell 脚本用 CRLF（Windows PowerShell 5.1 对 LF 脚本的解析不稳）
 *.ps1 text eol=crlf
 *.bat text eol=crlf

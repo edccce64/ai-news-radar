@@ -5,6 +5,8 @@
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-10
+
 ### 修复
 
 - **分区拆到两张卡导致标题重复**：原实现把所有区块混排后按 18 KB 一刀切，一个区被切在中间时，
@@ -21,6 +23,8 @@
 
 ### 新增
 
+- `set-secrets.sh`：`set-secrets.ps1` 的 Linux / macOS 版本，行为一致。
+- `requirements-dev.txt`：固定 ruff 版本，本地与 CI 共用同一份。
 - `tests/test_core.py`：43 个单测（标准库 unittest），覆盖判重去环、分区拆卡、字段截断、异常脱敏、签名与限流。
 - `.github/workflows/tests.yml`：push 到 `master` 自动跑单测。
 - **GitHub Pages 落地页**：<https://edccce64.github.io/ai-news-radar/>，由 `docs/index.html` 生成，
@@ -36,3 +40,5 @@
 - `set-secrets.ps1` 改为参数化并自动识别当前仓库，不再硬编码仓库名。
 - `.gitignore` 补 `.env.*`、SQLite 侧文件、日志、OS/编辑器文件、`.pi/`。
 - Actions 的 action 固定到 commit SHA，runner 固定 `ubuntu-24.04`，回写状态库改用 `git add -A data/`。
+- CI 增加 `lint` job，跑 `ruff check` 与 `ruff format --check`，格式不再靠人工坚持。
+- README 补齐 Linux / macOS 的安装、密钥配置、运行与开发命令。
