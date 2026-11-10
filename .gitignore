@@ -1,0 +1,30 @@
+# 密钥
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# SQLite 侧文件（主库 data/seen.db 是要提交的，-wal/-shm 不是）
+*.db-wal
+*.db-shm
+*.db-journal
+
+# 日志与临时文件
+*.log
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# agent 本地记忆（内部约定，不入库）
+.pi/
+
+# agent 本地规范文件（内部约定，不入库）
+CLAUDE.md

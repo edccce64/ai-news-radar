@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 信息情报官 · ai-news-radar</title>
+<meta name="description" content="每天定时采集 AI 新闻 / AI 工具 / 开源 Skill，经 LLM 筛选判重与逐条深度加工，以飞书折叠卡片推送日报。">
+<style>
+:root {
+  --blue: #3370ff; --ink: #1f2329; --muted: #646a73; --line: #dee0e3; --bg: #f7f8fa;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC",
+               "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  line-height: 1.7;
+}
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+.hero { background: linear-gradient(135deg, #3370ff 0%, #5b4bff 100%); color: #fff; padding: 64px 0 56px; }
+.hero h1 { margin: 0 0 12px; font-size: 38px; letter-spacing: .5px; }
+.hero p { margin: 0 0 22px; font-size: 17px; opacity: .95; }
+.badges { display: flex; gap: 10px; flex-wrap: wrap; }
+.badges a {
+  background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.3);
+  color: #fff; padding: 7px 14px; border-radius: 20px; font-size: 14px;
+}
+.badges a:hover { background: rgba(255,255,255,.28); text-decoration: none; }
+section { padding: 48px 0 8px; }
+h2 { font-size: 24px; margin: 0 0 18px; padding-bottom: 10px; border-bottom: 2px solid var(--line); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+.card h3 { margin: 0 0 8px; font-size: 16px; }
+.card p { margin: 0; font-size: 14px; color: var(--muted); }
+.shot { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+.shot img { width: 100%; display: block; border-radius: 6px; }
+pre {
+  background: #1f2329; color: #e6edf3; padding: 16px 18px; border-radius: 10px;
+  overflow-x: auto; font-size: 13.5px; line-height: 1.6;
+}
+code { font-family: "Cascadia Code", Consolas, monospace; }
+ul { padding-left: 20px; }
+li { margin: 5px 0; }
+footer { margin-top: 46px; padding: 26px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+.tag { display: inline-block; background: #eef2ff; color: var(--blue); border-radius: 4px; padding: 2px 9px; font-size: 13px; margin-right: 6px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>AI 信息情报官</h1>
+    <p>每天定时采集 AI 新闻 / AI 工具 / 开源 Skill，经 LLM 筛选判重与逐条深度加工，<br>以飞书折叠卡片推送日报 —— 每条四段：摘要 / 普通人影响 / 自媒体选题 / 快速上手。</p>
+    <div class="badges">
+      <a href="https://github.com/edccce64/ai-news-radar">GitHub 仓库</a>
+      <a href="https://github.com/edccce64/ai-news-radar#快速开始">快速开始</a>
+      <a href="https://github.com/edccce64/ai-news-radar#数据来源与第三方条款">第三方条款</a>
+      <a href="https://github.com/edccce64/ai-news-radar/blob/master/LICENSE">MIT License</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<section>
+  <h2>效果</h2>
+  <div class="shot">
+    <img src="screenshot.png" alt="飞书卡片效果示意" loading="lazy">
+  </div>
+  <p style="color:var(--muted);font-size:14px">
+    卡片标题常驻、正文折叠，点开看完整分析。上图由真实推送数据与真实 LLM 加工结果渲染而成
+    （<code>tools/render_preview.py</code> 可复现）。
+  </p>
+</section>
+
+<section>
+  <h2>它做什么</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>两区日报</h3>
+      <p>「今日要闻」走中文源，「工具与 Skill」走 agent-skills-hub / GitHub Trending / Show HN，按「冒头度」排序。</p>
+    </div>
+    <div class="card">
+      <h3>同事件自动聚拢</h3>
+      <p>判重交给 LLM：同一件事的多家报道聚成一条，只留信息最全的那篇。</p>
+    </div>
+    <div class="card">
+      <h3>逐条深度加工</h3>
+      <p>每条产出 250–400 字摘要 + 普通人影响 + 自媒体选题 + 快速上手，素材不足宁可跳过不硬编。</p>
+    </div>
+    <div class="card">
+      <h3>零运维</h3>
+      <p>GitHub Actions 定时跑，SQLite 记已推送，跨次跨天不重推；单源挂掉不影响其他源。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>快速开始</h2>
+  <pre><code>git clone https://github.com/edccce64/ai-news-radar.git
+cd ai-news-radar
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+copy .env.example .env   # 填 LLM key 与飞书 webhook（UTF-8 无 BOM）
+.venv\Scripts\python.exe main.py --dry-run   # 试跑，不推送
+.venv\Scripts\python.exe main.py             # 真推送</code></pre>
+  <p style="color:var(--muted);font-size:14px">部署到 GitHub Actions、配置飞书机器人、开签名校验等完整步骤见
+    <a href="https://github.com/edccce64/ai-news-radar#快速开始">README</a>。</p>
+</section>
+
+<section>
+  <h2>数据来源</h2>
+  <p>
+    <span class="tag">AIHOT 精选</span>
+    <span class="tag">机器之心</span>
+    <span class="tag">新智元</span>
+    <span class="tag">量子位</span>
+    <span class="tag">AI 前线</span>
+    <span class="tag">36Kr AI</span>
+    <span class="tag">少数派 AI</span>
+    <span class="tag">agent-skills-hub</span>
+    <span class="tag">GitHub Trending</span>
+    <span class="tag">Show HN</span>
+  </p>
+  <p style="color:var(--muted);font-size:14px">
+    RSS 内容版权归原发布方；agent-skills-hub 的目录数据仅运行时抓取、不再分发；
+    RSSHub 镜像与公众号 RSS 桥为第三方服务。详见
+    <a href="https://github.com/edccce64/ai-news-radar#数据来源与第三方条款">第三方条款</a>。
+  </p>
+</section>
+
+<footer>
+  <div class="wrap" style="padding:0">
+    <p>AI 信息情报官 · <a href="https://github.com/edccce64/ai-news-radar">github.com/edccce64/ai-news-radar</a> · MIT License</p>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>

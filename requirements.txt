@@ -1,0 +1,8 @@
+# 运行时依赖（版本已 pin，与 Actions 上的 Python 3.13 对齐）
+feedparser==6.0.14
+requests==2.34.2
+openai==3.27.0
+python-dotenv==1.2.4
+
+# 测试只用标准库 unittest，不需要额外依赖：
+#   python -m unittest discover -s tests -v

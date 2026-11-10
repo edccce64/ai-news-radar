@@ -1,0 +1,28 @@
+# 静态检查与格式化规则。
+#
+# ruff 不是运行时依赖，本文件也不参与打包（项目不是库，是脚本集合）。
+# 要跑检查：
+#   pip install ruff
+#   ruff check .
+# 要自动格式化：
+#   ruff format .
+#
+# 依赖清单以 requirements.txt 为准，不在这里重复声明。
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = [".venv", "__pycache__", ".git", ".pi"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# config.py 里的大段 prompt 模板与中文说明是「内容」，不按行宽折行
+"config.py" = ["E501"]
+# 单测里的中文描述较长，行宽不卡
+"tests/*" = ["E501"]
+
+[tool.ruff.format]
+# config.py 的源列表刻意写成「一行一条」，展开成多行反而更难读 —— 不参与自动格式化
+exclude = ["config.py"]

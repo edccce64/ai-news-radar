@@ -1,0 +1,74 @@
+name: daily-digest
+
+on:
+  schedule:
+    # ⚠️ 别把 cron 放在 `0` 分（整点）—— GitHub 文档明写整点是高负载时段：
+    #    "High load times include the start of every hour. To decrease the chance
+    #     of delay, schedule your workflow to run at a different time of the hour."
+    #    实测代价：01:00 的任务拖到 06:47 才跑，晚 5 小时 47 分。
+    # ⚠️ 同一 workflow 同时只保留一个待跑实例：某个点被塞进队列排很久时，
+    #    后面的兜底点会被跳过。所以三个点拉开到 7/27/47 分，给阻塞留出释放窗口。
+    #    北京时间 9:07 / 9:27 / 9:47
+    - cron: '7 1 * * *'
+    - cron: '27 1 * * *'
+    - cron: '47 1 * * *'
+  workflow_dispatch:       # 第三方定时服务也走这个入口触发
+
+# dispatch（cron-job.org）与 schedule 可能并发：两个 job 各自 checkout 到同一份旧
+# seen.db，去重双双失效。串行化后，后来的排到时 checkout 能拿到前一个已 push 的新库。
+concurrency:
+  group: daily-digest
+  cancel-in-progress: false
+
+permissions:
+  contents: write          # 允许回写 data/seen.db
+
+jobs:
+  push:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      # action 固定到 commit SHA：版本标签可被移动，配上 contents: write 时是供应链风险
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run digest
+        run: python main.py
+        env:
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          MIMO_API_KEY: ${{ secrets.MIMO_API_KEY }}
+          MIMO_BASE_URL: ${{ secrets.MIMO_BASE_URL }}
+          MIMO_MODEL: ${{ secrets.MIMO_MODEL }}
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+          # GitHub Search API 拿 AI 热门仓库用。Actions 自动提供，无需用户配置。
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit seen state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # 用 -A 而不是精确路径：库里没有 data/seen.db 时（首次运行或历史被清理过），
+          # 精确路径的 git add 会直接报错，把整个工作流带崩。
+          # .gitignore 已排除 *.db-wal / *.db-shm 等侧文件，这里不会带进脏文件。
+          git add -A data/
+          git diff --cached --quiet || git commit -m "chore: update seen state"
+          git push
+
+      # 定时任务没人盯，挂了必须让你知道，否则会静默漏推好几天
+      - name: Notify failure to Feishu
+        if: failure()
+        run: |
+          curl -sS -X POST "$FEISHU_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            --data-raw "{\"msg_type\":\"text\",\"content\":{\"text\":\"⚠️ AI 情报官今日抓取失败，请检查：${ACTIONS_URL}\"}}"
+        env:
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          ACTIONS_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

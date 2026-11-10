@@ -1,0 +1,238 @@
+{
+ "cards": [
+  {
+   "msg_type": "interactive",
+   "card": {
+    "schema": "2.0",
+    "config": {
+     "update_multi": true
+    },
+    "header": {
+     "title": {
+      "tag": "plain_text",
+      "content": "AI 情报日报 2026-11-10（1/2）"
+     },
+     "template": "blue"
+    },
+    "body": {
+     "elements": [
+      {
+       "tag": "markdown",
+       "content": "**📰 今日要闻**"
+      },
+      {
+       "tag": "collapsible_panel",
+       "expanded": false,
+       "header": {
+        "title": {
+         "tag": "markdown",
+         "content": "★★★★★ Nvidia CEO 黄仁勋婚外情风波削弱其对严格 AI 芯片出口管制的游说（AIHOT 精选）"
+        },
+        "vertical_align": "center",
+        "icon": {
+         "tag": "standard_icon",
+         "token": "down-small-ccm_outlined",
+         "size": "16px 16px"
+        },
+        "icon_position": "right",
+        "icon_expanded_angle": -180
+       },
+       "border": {
+        "color": "grey",
+        "corner_radius": "5px"
+       },
+       "vertical_spacing": "8px",
+       "padding": "8px 8px 8px 8px",
+       "elements": [
+        {
+         "tag": "markdown",
+         "content": "**原文**：[https://aihot.news/items/e17dl64mjiov57c0jtwn41bxd](https://aihot.news/items/e17dl64mjiov57c0jtwn41bxd)\n\n**摘要**\n据 Bloomberg 报道，Nvidia CEO 黄仁勋在全员备忘录中承认与被美国情报机构认定为疑似中国情报人员线人的 Alice Huang（Huang Le）存在婚外关系，董事会已启动由独立董事主导的调查。此事对 Nvidia 的直接冲击在于黄仁勋个人信誉与公司治理形象受损，而更微妙的连锁反应发生在政策层面：黄仁勋此前一直是反对美国对华 AI 芯片出口管制最积极的科技领袖之一，多次公开主张限制措施伤害美国产业、应允许 Nvidia 向中国销售合规芯片。婚外情与疑似间谍关联的曝光，客观上削弱了他在华盛顿游说时的道德权威与政治资本，反对者可以借此质疑其立场动机。对 Nvidia 而言，中国曾是数据中心业务的重要市场，出口管制已造成数十亿美元级别的收入缺口，而 CEO 个人丑闻恰逢管制政策博弈关键期，可能让公司在政策话语权上处于更被动的位置。董事会调查结果、美国情报机构对 Alice Huang 关联的进一步披露，以及国会与商务部是否借题收紧立场，是后续三个观察点。\n\n**普通人影响**\n这事短期不影响你买显卡或 AI 服务价格，但出口管制松紧直接决定国内能用到什么档次的 AI 算力。黄仁勋游说力被削弱，意味着对华芯片限制更难放松，国内 AI 产品迭代和定价可能受牵连。\n\n**自媒体选题**\n标题《黄仁勋的婚外情，为什么可能让中国用户用不上更好的 AI 芯片》。开篇用备忘录承认婚外情+疑似间谍线人做钩子，中段讲他此前如何游说反对出口管制，结尾落到「CEO 丑闻如何变成政策筹码」，配 Bloomberg 与 the-decoder 双信源截图。\n\n**快速上手**\n新闻类跟进：用 Codex 抓取 Bloomberg 原文、Nvidia 官方备忘录与 the-decoder 报道做三方交叉核对，重点提取董事会调查措辞、情报机构认定依据、黄仁勋过往游说言论时间线，生成事实核查清单后再动笔。"
+        }
+       ]
+      },
+      {
+       "tag": "collapsible_panel",
+       "expanded": false,
+       "header": {
+        "title": {
+         "tag": "markdown",
+         "content": "★★★★★ Anthropic 拟感恩节前 IPO，接受低于预期的估值，募资 800–1000 亿美元（AIHOT 精选）"
+        },
+        "vertical_align": "center",
+        "icon": {
+         "tag": "standard_icon",
+         "token": "down-small-ccm_outlined",
+         "size": "16px 16px"
+        },
+        "icon_position": "right",
+        "icon_expanded_angle": -180
+       },
+       "border": {
+        "color": "grey",
+        "corner_radius": "5px"
+       },
+       "vertical_spacing": "8px",
+       "padding": "8px 8px 8px 8px",
+       "elements": [
+        {
+         "tag": "markdown",
+         "content": "**原文**：[https://aihot.news/items/okhx4jjwucd647299qwzsl6ua](https://aihot.news/items/okhx4jjwucd647299qwzsl6ua)\n\n**摘要**\n据《金融时报》援引投资者消息，Anthropic 计划在感恩节前启动 IPO，拟募资 800–1000 亿美元，估值区间 1.25–1.75 万亿美元。这一估值低于部分最乐观投资者此前期望的 2 万亿美元，但显著高于其当前约 9650 亿美元的估值水平。若按上限完成，这将是近年来规模最大的科技 IPO 之一，也将成为生成式 AI 赛道首个以万亿级估值登陆公开市场的头部模型公司。Anthropic 由前 OpenAI 成员创立，主打 Claude 系列模型，以安全性和企业级应用为差异化定位，背后有亚马逊、谷歌等战略投资者。此次选择“接受低于预期的估值”推进上市，反映出公司在融资窗口、竞争节奏与公开市场定价之间的权衡：一方面 AI 基础设施投入巨大、需要持续输血，另一方面二级市场对高估值 AI 资产的接受度仍待检验。该事件对行业具有风向标意义——它将为 OpenAI、xAI 等未上市 AI 公司提供一个公开市场定价锚点，也会影响一级市场对 AI 资产的估值预期。\n\n**普通人影响**\nAnthropic 上市意味着 Claude 背后的公司要接受公开市场审视，其财务透明度和商业模式会被更多人看懂。对普通用户而言，AI 助手的选择会更多、价格竞争更激烈，企业级 AI 工具也可能加速进入日常办公场景。\n\n**自媒体选题**\n选题：《万亿估值却“打折上市”：Anthropic 的 IPO 给 AI 泡沫论添了什么料？》——用“期望 2 万亿、实际 1.25–1.75 万亿”的落差做钩子，对比当前 9650 亿估值，拆解它为何选择感恩节前抢跑，并列出对 OpenAI 等未上市公司的定价连锁反应。热度来自“AI 泡沫”与“最大 IPO”双重话题。\n\n**快速上手**\n新闻类跟进：用 Codex 抓取 FT、The Decoder 等源报道，让模型对比各家的估值数字与时间线，生成一份“事实核对表”；再让它列出招股书披露后需重点关注的财务指标（营收、亏损、算力成本占比），形成跟踪清单。"
+        }
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "msg_type": "interactive",
+   "card": {
+    "schema": "2.0",
+    "config": {
+     "update_multi": true
+    },
+    "header": {
+     "title": {
+      "tag": "plain_text",
+      "content": "AI 情报日报 2026-11-10（2/2）"
+     },
+     "template": "blue"
+    },
+    "body": {
+     "elements": [
+      {
+       "tag": "markdown",
+       "content": "**🛠 工具与 Skill**"
+      },
+      {
+       "tag": "collapsible_panel",
+       "expanded": false,
+       "header": {
+        "title": {
+         "tag": "markdown",
+         "content": "★★★★☆ agent-autoloop（SkillsHub 热门）"
+        },
+        "vertical_align": "center",
+        "icon": {
+         "tag": "standard_icon",
+         "token": "down-small-ccm_outlined",
+         "size": "16px 16px"
+        },
+        "icon_position": "right",
+        "icon_expanded_angle": -180
+       },
+       "border": {
+        "color": "grey",
+        "corner_radius": "5px"
+       },
+       "vertical_spacing": "8px",
+       "padding": "8px 8px 8px 8px",
+       "elements": [
+        {
+         "tag": "markdown",
+         "content": "**原文**：[https://agentskillshub.top/skill/KKKKhazix/agent-autoloop/](https://agentskillshub.top/skill/KKKKhazix/agent-autoloop/)\n\n**摘要**\nagent-autoloop 是 SkillsHub 上排名第 10 的热门技能，星标约 4.1k（4089），日增约 733 星，增速在同类中相当突出。它的核心定位是让命令行 Agent 在后台自主接活、持续跟进任务，平时不打扰用户，只在遇到拿不准的决策点时推送卡片请用户拍板。这解决了当前 Agent 工具的一个关键痛点：多数 Agent 要么需要人全程盯着，要么完全放手后容易跑偏。agent-autoloop 用「后台自治 + 关键节点人工确认」的混合模式，在自动化与可控性之间找平衡。从数据看，733/天的增速说明它踩中了开发者对「可托管的 Agent 工作流」的真实需求，而非单纯的概念炒作。SkillsHub 作为技能聚合平台，这类高增速条目往往反映下一波工具链的演进方向。对行业而言，它代表了 Agent 从「对话式助手」向「后台任务执行者」的形态迁移，人机协作的接口从聊天框变成了审批卡片。\n\n**普通人影响**\n非技术人群也能间接受益：以后你交代给 AI 的琐事（如整理资料、跟进订单）可由后台 Agent 自动跑完，只在关键选择时弹卡片问你一句，省去反复盯屏和来回对话的麻烦。\n\n**自媒体选题**\n选题：《你的 AI 助手终于学会「自己上班」了：agent-autoloop 实测》。开写角度：先展示一个真实场景——让 Agent 后台整理一周行业资讯并自动跟进待办，中途只弹了两次确认卡片；再对比传统对话式 Agent 需要人全程盯着的体验落差。热度来自 733/天的增速和「不烦人」这个情绪钩子。\n\n**快速上手**\n1. 在 SkillsHub 找到 agent-autoloop 条目，按页面说明安装到你的命令行 Agent 环境；2. 给它一个边界清晰的后台任务（如定时汇总某类信息），观察它何时主动找你拍板；3. 根据卡片触发频率调整任务粒度，找到「不烦你」和「不跑偏」的平衡点。"
+        }
+       ]
+      },
+      {
+       "tag": "collapsible_panel",
+       "expanded": false,
+       "header": {
+        "title": {
+         "tag": "markdown",
+         "content": "★★★★☆ unslop（SkillsHub 热门）"
+        },
+        "vertical_align": "center",
+        "icon": {
+         "tag": "standard_icon",
+         "token": "down-small-ccm_outlined",
+         "size": "16px 16px"
+        },
+        "icon_position": "right",
+        "icon_expanded_angle": -180
+       },
+       "border": {
+        "color": "grey",
+        "corner_radius": "5px"
+       },
+       "vertical_spacing": "8px",
+       "padding": "8px 8px 8px 8px",
+       "elements": [
+        {
+         "tag": "markdown",
+         "content": "**原文**：[https://agentskillshub.top/skill/heydamir/unslop/](https://agentskillshub.top/skill/heydamir/unslop/)\n\n**摘要**\nunslop 是 SkillsHub 上排名第 4 的热门 Claude 技能，星标数达 11.9k，日增约 1.2k，增速在同类中相当突出。它的核心功能是：把「vibecoded」——即用 AI 快速生成、带有明显 AI 痕迹的界面——转化为真正经过设计考量的 UI。所谓「AI 味」通常表现为过度对称的卡片布局、千篇一律的渐变按钮、缺乏层次的间距和配色，以及堆砌的圆角和阴影。unslop 通过一套可复用的 Claude 技能指令，让模型在生成或修改前端代码时遵循更成熟的设计规范，从而产出更接近人类设计师手笔的界面。这一工具切中了当前 AI 编程浪潮中的一个真实痛点：代码能跑，但界面「一眼假」。随着 Cursor、Claude Code 等工具让非设计师也能快速搭出应用，审美落差成为新的瓶颈。11.9k 星标和 1.2k 日增说明社区对「去 AI 味」的需求正在快速聚集，也反映出 AI 技能生态（SkillsHub 这类平台）正成为模型能力之外的新竞争维度。\n\n**普通人影响**\n非技术人群用 AI 做网页或 App 时，最常被吐槽「一看就是 AI 做的」。unslop 能自动把粗糙界面调得更像专业设计，省去请设计师或反复调 CSS 的麻烦，让个人项目直接拿得出手。\n\n**自媒体选题**\n标题《我用 unslop 把 AI 生成的丑界面救回来了：前后对比实测》。开篇晒一张典型「AI 味」截图，再展示 unslop 处理后的效果，逐条拆解它改了哪些设计细节（间距、配色、层次），最后给出安装和调用步骤。热度来自「AI 审美差」是普遍共鸣点，对比图天然适合传播。\n\n**快速上手**\n1. 在 SkillsHub 找到 unslop 技能页，按说明将其安装到 Claude 环境。2. 把现有 AI 生成的界面代码或截图交给 Claude，调用 unslop 技能要求重设计。3. 对比输出，重点检查间距、配色和组件层次是否更自然。"
+        }
+       ]
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "entries": [
+  {
+   "link": "https://aihot.news/items/e17dl64mjiov57c0jtwn41bxd",
+   "title": "Nvidia CEO 黄仁勋婚外情风波削弱其对严格 AI 芯片出口管制的游说",
+   "source": "AIHOT 精选",
+   "summary": "<p>据 Bloomberg 报道，Nvidia CEO 黄仁勋在全员备忘录中承认与被美国情报机构认定为疑似中国情报人员线人的 Alice Huang（Huang Le）存在婚外关系，董事会已启动独立董事主导的调查。</p> <p>🔗 <a href=\"https://the-decoder.com/nvidia-espionage-scandal-weakens-huangs-lobby-aga",
+   "kind": "news",
+   "stars": 5,
+   "analysis": {
+    "skip": false,
+    "质量": 4,
+    "摘要": "据 Bloomberg 报道，Nvidia CEO 黄仁勋在全员备忘录中承认与被美国情报机构认定为疑似中国情报人员线人的 Alice Huang（Huang Le）存在婚外关系，董事会已启动由独立董事主导的调查。此事对 Nvidia 的直接冲击在于黄仁勋个人信誉与公司治理形象受损，而更微妙的连锁反应发生在政策层面：黄仁勋此前一直是反对美国对华 AI 芯片出口管制最积极的科技领袖之一，多次公开主张限制措施伤害美国产业、应允许 Nvidia 向中国销售合规芯片。婚外情与疑似间谍关联的曝光，客观上削弱了他在华盛顿游说时的道德权威与政治资本，反对者可以借此质疑其立场动机。对 Nvidia 而言，中国曾是数据中心业务的重要市场，出口管制已造成数十亿美元级别的收入缺口，而 CEO 个人丑闻恰逢管制政策博弈关键期，可能让公司在政策话语权上处于更被动的位置。董事会调查结果、美国情报机构对 Alice Huang 关联的进一步披露，以及国会与商务部是否借题收紧立场，是后续三个观察点。",
+    "普通人影响": "这事短期不影响你买显卡或 AI 服务价格，但出口管制松紧直接决定国内能用到什么档次的 AI 算力。黄仁勋游说力被削弱，意味着对华芯片限制更难放松，国内 AI 产品迭代和定价可能受牵连。",
+    "自媒体选题": "标题《黄仁勋的婚外情，为什么可能让中国用户用不上更好的 AI 芯片》。开篇用备忘录承认婚外情+疑似间谍线人做钩子，中段讲他此前如何游说反对出口管制，结尾落到「CEO 丑闻如何变成政策筹码」，配 Bloomberg 与 the-decoder 双信源截图。",
+    "快速上手": "新闻类跟进：用 Codex 抓取 Bloomberg 原文、Nvidia 官方备忘录与 the-decoder 报道做三方交叉核对，重点提取董事会调查措辞、情报机构认定依据、黄仁勋过往游说言论时间线，生成事实核查清单后再动笔。"
+   }
+  },
+  {
+   "link": "https://aihot.news/items/okhx4jjwucd647299qwzsl6ua",
+   "title": "Anthropic 拟感恩节前 IPO，接受低于预期的估值，募资 800–1000 亿美元",
+   "source": "AIHOT 精选",
+   "summary": "<p>据《金融时报》援引投资者的消息，Anthropic 计划在感恩节前 IPO，拟募资 800–1000 亿美元，估值 1.25–1.75 万亿美元，低于最乐观投资者期望的 2 万亿美元，但高于当前 9650 亿美元。</p> <p>🔗 <a href=\"https://the-decoder.com/anthropic-pushes-ahead-with-pre-thanksgiving-ip",
+   "kind": "news",
+   "stars": 5,
+   "analysis": {
+    "skip": false,
+    "质量": 4,
+    "摘要": "据《金融时报》援引投资者消息，Anthropic 计划在感恩节前启动 IPO，拟募资 800–1000 亿美元，估值区间 1.25–1.75 万亿美元。这一估值低于部分最乐观投资者此前期望的 2 万亿美元，但显著高于其当前约 9650 亿美元的估值水平。若按上限完成，这将是近年来规模最大的科技 IPO 之一，也将成为生成式 AI 赛道首个以万亿级估值登陆公开市场的头部模型公司。Anthropic 由前 OpenAI 成员创立，主打 Claude 系列模型，以安全性和企业级应用为差异化定位，背后有亚马逊、谷歌等战略投资者。此次选择“接受低于预期的估值”推进上市，反映出公司在融资窗口、竞争节奏与公开市场定价之间的权衡：一方面 AI 基础设施投入巨大、需要持续输血，另一方面二级市场对高估值 AI 资产的接受度仍待检验。该事件对行业具有风向标意义——它将为 OpenAI、xAI 等未上市 AI 公司提供一个公开市场定价锚点，也会影响一级市场对 AI 资产的估值预期。",
+    "普通人影响": "Anthropic 上市意味着 Claude 背后的公司要接受公开市场审视，其财务透明度和商业模式会被更多人看懂。对普通用户而言，AI 助手的选择会更多、价格竞争更激烈，企业级 AI 工具也可能加速进入日常办公场景。",
+    "自媒体选题": "选题：《万亿估值却“打折上市”：Anthropic 的 IPO 给 AI 泡沫论添了什么料？》——用“期望 2 万亿、实际 1.25–1.75 万亿”的落差做钩子，对比当前 9650 亿估值，拆解它为何选择感恩节前抢跑，并列出对 OpenAI 等未上市公司的定价连锁反应。热度来自“AI 泡沫”与“最大 IPO”双重话题。",
+    "快速上手": "新闻类跟进：用 Codex 抓取 FT、The Decoder 等源报道，让模型对比各家的估值数字与时间线，生成一份“事实核对表”；再让它列出招股书披露后需重点关注的财务指标（营收、亏损、算力成本占比），形成跟踪清单。"
+   }
+  },
+  {
+   "source": "SkillsHub 热门",
+   "title": "agent-autoloop",
+   "link": "https://agentskillshub.top/skill/KKKKhazix/agent-autoloop/",
+   "summary": "#10 agent-autoloop — ★ 4.1k (733/day)。让你的命令行 Agent 在后台自己接活、自己跟进到底；平时不烦你，遇到拿不准的事才发卡片找你拍板。 | Velocity: 733/day | Stars: 4089",
+   "kind": "tool",
+   "stars": 4,
+   "analysis": {
+    "skip": false,
+    "质量": 4,
+    "摘要": "agent-autoloop 是 SkillsHub 上排名第 10 的热门技能，星标约 4.1k（4089），日增约 733 星，增速在同类中相当突出。它的核心定位是让命令行 Agent 在后台自主接活、持续跟进任务，平时不打扰用户，只在遇到拿不准的决策点时推送卡片请用户拍板。这解决了当前 Agent 工具的一个关键痛点：多数 Agent 要么需要人全程盯着，要么完全放手后容易跑偏。agent-autoloop 用「后台自治 + 关键节点人工确认」的混合模式，在自动化与可控性之间找平衡。从数据看，733/天的增速说明它踩中了开发者对「可托管的 Agent 工作流」的真实需求，而非单纯的概念炒作。SkillsHub 作为技能聚合平台，这类高增速条目往往反映下一波工具链的演进方向。对行业而言，它代表了 Agent 从「对话式助手」向「后台任务执行者」的形态迁移，人机协作的接口从聊天框变成了审批卡片。",
+    "普通人影响": "非技术人群也能间接受益：以后你交代给 AI 的琐事（如整理资料、跟进订单）可由后台 Agent 自动跑完，只在关键选择时弹卡片问你一句，省去反复盯屏和来回对话的麻烦。",
+    "自媒体选题": "选题：《你的 AI 助手终于学会「自己上班」了：agent-autoloop 实测》。开写角度：先展示一个真实场景——让 Agent 后台整理一周行业资讯并自动跟进待办，中途只弹了两次确认卡片；再对比传统对话式 Agent 需要人全程盯着的体验落差。热度来自 733/天的增速和「不烦人」这个情绪钩子。",
+    "快速上手": "1. 在 SkillsHub 找到 agent-autoloop 条目，按页面说明安装到你的命令行 Agent 环境；2. 给它一个边界清晰的后台任务（如定时汇总某类信息），观察它何时主动找你拍板；3. 根据卡片触发频率调整任务粒度，找到「不烦你」和「不跑偏」的平衡点。"
+   }
+  },
+  {
+   "source": "SkillsHub 热门",
+   "title": "unslop",
+   "link": "https://agentskillshub.top/skill/heydamir/unslop/",
+   "summary": "#4 unslop — ★ 11.9k (1.2k/day)。A Claude skill that turns vibecoded, AI-looking UI into a designed interface | Velocity: 1.2k/day | Stars: 11892",
+   "kind": "tool",
+   "stars": 4,
+   "analysis": {
+    "skip": false,
+    "质量": 4,
+    "摘要": "unslop 是 SkillsHub 上排名第 4 的热门 Claude 技能，星标数达 11.9k，日增约 1.2k，增速在同类中相当突出。它的核心功能是：把「vibecoded」——即用 AI 快速生成、带有明显 AI 痕迹的界面——转化为真正经过设计考量的 UI。所谓「AI 味」通常表现为过度对称的卡片布局、千篇一律的渐变按钮、缺乏层次的间距和配色，以及堆砌的圆角和阴影。unslop 通过一套可复用的 Claude 技能指令，让模型在生成或修改前端代码时遵循更成熟的设计规范，从而产出更接近人类设计师手笔的界面。这一工具切中了当前 AI 编程浪潮中的一个真实痛点：代码能跑，但界面「一眼假」。随着 Cursor、Claude Code 等工具让非设计师也能快速搭出应用，审美落差成为新的瓶颈。11.9k 星标和 1.2k 日增说明社区对「去 AI 味」的需求正在快速聚集，也反映出 AI 技能生态（SkillsHub 这类平台）正成为模型能力之外的新竞争维度。",
+    "普通人影响": "非技术人群用 AI 做网页或 App 时，最常被吐槽「一看就是 AI 做的」。unslop 能自动把粗糙界面调得更像专业设计，省去请设计师或反复调 CSS 的麻烦，让个人项目直接拿得出手。",
+    "自媒体选题": "标题《我用 unslop 把 AI 生成的丑界面救回来了：前后对比实测》。开篇晒一张典型「AI 味」截图，再展示 unslop 处理后的效果，逐条拆解它改了哪些设计细节（间距、配色、层次），最后给出安装和调用步骤。热度来自「AI 审美差」是普遍共鸣点，对比图天然适合传播。",
+    "快速上手": "1. 在 SkillsHub 找到 unslop 技能页，按说明将其安装到 Claude 环境。2. 把现有 AI 生成的界面代码或截图交给 Claude，调用 unslop 技能要求重设计。3. 对比输出，重点检查间距、配色和组件层次是否更自然。"
+   }
+  }
+ ]
+}
