@@ -62,13 +62,12 @@ jobs:
           git diff --cached --quiet || git commit -m "chore: update seen state"
           git push
 
-      # 定时任务没人盯，挂了必须让你知道，否则会静默漏推好几天
+      # 定时任务没人盯，挂了必须让你知道，否则会静默漏推好几天。
+      # 走项目脚本而不是 curl：机器人开了签名校验时，裸 curl 会被飞书拒收（19021）。
       - name: Notify failure to Feishu
         if: failure()
-        run: |
-          curl -sS -X POST "$FEISHU_WEBHOOK_URL" \
-            -H 'Content-Type: application/json' \
-            --data-raw "{\"msg_type\":\"text\",\"content\":{\"text\":\"⚠️ AI 情报官今日抓取失败，请检查：${ACTIONS_URL}\"}}"
+        run: python tools/notify_failure.py "${ACTIONS_URL}"
         env:
           FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
           ACTIONS_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

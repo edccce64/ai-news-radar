@@ -97,13 +97,24 @@ def _chat(prompt):
     raise SystemExit(f"LLM 调用连续 {LLM_RETRIES} 次失败：{type(last).__name__} {_redact(last)}")
 
 
-def _extract_json(text):
-    """从夹杂说明文字的输出里抠出首个 JSON 对象或数组。"""
-    for open_ch, close_ch in (("{", "}"), ("[", "]")):
-        start, end = text.find(open_ch), text.rfind(close_ch)
-        if start != -1 and end > start:
-            return text[start : end + 1]
-    return None
+def _extract_json_candidates(text):
+    """从夹杂说明文字的输出里抠出候选 JSON 片段，**数组优先**。
+
+    评分结果是数组。若先按 `{...}` 抠，`[{"a":1}]` 会被抠成 `{"a":1}`，
+    数组退化成对象，_score_map 判非法后整天报废。说明文字里也常带 `[1]`
+    这类方括号，所以从靠后的左括号往回试，第一个能解析的就是真 JSON。
+    """
+    out = []
+    for open_ch, close_ch in (("[", "]"), ("{", "}")):
+        end = text.rfind(close_ch)
+        if end == -1:
+            continue
+        starts, i = [], text.find(open_ch)
+        while i != -1 and i < end and len(starts) < 5:
+            starts.append(i)
+            i = text.find(open_ch, i + 1)
+        out.extend(text[s : end + 1] for s in reversed(starts))
+    return out
 
 
 def _parse_json(text):
@@ -111,7 +122,7 @@ def _parse_json(text):
     stripped = text.strip()
     if stripped.startswith("```"):
         stripped = stripped.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
-    for candidate in (stripped, _extract_json(stripped)):
+    for candidate in [stripped, *_extract_json_candidates(stripped)]:
         if candidate:
             try:
                 return json.loads(candidate)

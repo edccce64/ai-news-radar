@@ -82,6 +82,19 @@ def _select(items, scores, limit):
     return out[:limit]
 
 
+def _notify_empty_once(title) -> None:
+    """空通知每天只发一次。
+
+    三个定时点都会各跑一遍。不发过就不拦，同一张「今日无重要更新」会连发三次
+    （2026-11-10 实测）。只记空通知、不写完成标记——后面触发点拿到新条目时仍可正常推。
+    """
+    if store.notified_empty_today():
+        print("[INFO] 今日已发过空通知，跳过")
+        return
+    feishu.notify_empty(title)
+    store.mark_notified_empty()
+
+
 def main() -> None:
     """编排全流程。--dry-run 只打印，不推送、不写库。"""
     load_dotenv()
@@ -140,8 +153,8 @@ def main() -> None:
 
     if not news and not tools:
         print("[INFO] 无新条目")
-        if not args.dry_run and not store.pushed_within():
-            feishu.notify_empty(title)
+        if not args.dry_run:
+            _notify_empty_once(title)
         return
 
     picked = []
@@ -171,8 +184,8 @@ def main() -> None:
 
     if not kept:
         print("[INFO] 无入选条目")
-        if not args.dry_run and not store.pushed_within():
-            feishu.notify_empty(title)
+        if not args.dry_run:
+            _notify_empty_once(title)
         return
 
     if args.dry_run:

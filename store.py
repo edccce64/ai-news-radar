@@ -34,6 +34,13 @@ def _connect():
                finished_at TEXT NOT NULL
            )"""
     )
+    # 空通知单独记：它不进 pushed，也不该锁住当天（后面触发点还可能拿到新条目）
+    conn.execute(
+        """CREATE TABLE IF NOT EXISTS empty_notices (
+               day     TEXT PRIMARY KEY,
+               sent_at TEXT NOT NULL
+           )"""
+    )
     return conn
 
 
@@ -63,10 +70,9 @@ def mark_pushed(entries) -> None:
 
 
 def pushed_within(hours=12) -> bool:
-    """最近 N 小时内推过条目吗？
+    """最近 N 小时内推过真实条目吗？不含空通知。
 
-    用于抑制兜底触发点重复发「今日无重要更新」——三档 cron 里第一个推完，
-    后面的会因无新条目走到空通知分支，不拦就会刷屏。
+    只作查询用：每日闸门是 finished_today()，空通知去重是 empty_notices 表。
     """
     cutoff = (
         datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
@@ -113,6 +119,31 @@ def mark_finished() -> None:
     try:
         conn.execute(
             "INSERT OR IGNORE INTO runs (day, finished_at) VALUES (?, ?)",
+            (today_bj(), _now()),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def notified_empty_today() -> bool:
+    """今天是否已发过「今日无重要更新」通知。"""
+    conn = _connect()
+    try:
+        row = conn.execute(
+            "SELECT COUNT(*) FROM empty_notices WHERE day = ?", (today_bj(),)
+        ).fetchone()
+    finally:
+        conn.close()
+    return row[0] > 0
+
+
+def mark_notified_empty() -> None:
+    """记录今天已发过空通知。不写 runs 表：不能锁住当天后续的真实推送。"""
+    conn = _connect()
+    try:
+        conn.execute(
+            "INSERT OR IGNORE INTO empty_notices (day, sent_at) VALUES (?, ?)",
             (today_bj(), _now()),
         )
         conn.commit()

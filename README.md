@@ -277,6 +277,7 @@ gh workflow run daily.yml -R <owner>/<repo>
 | `feishu.py` | 两区卡片组装 + 拆卡 + 推送 |
 | `main.py` | 编排全流程，`--dry-run` |
 | `tests/test_core.py` | 核心逻辑单测（标准库 unittest，无需额外依赖） |
+| `tools/notify_failure.py` | Actions 跑挂时的飞书告警，与正式推送同一套签名 |
 | `data/seen.db` | 状态库，**commit 回仓库**（Actions 跨次去重靠它） |
 
 **配置与文档**

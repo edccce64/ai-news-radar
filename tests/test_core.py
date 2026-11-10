@@ -4,18 +4,25 @@
     .venv\\Scripts\\python.exe -m unittest discover -s tests -v
 """
 
+import contextlib
+import importlib.util
+import io
 import json
 import os
 import sys
+import tempfile
 import unittest
+from pathlib import Path
 from unittest import mock
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, _ROOT)
 
 import api_fetcher  # noqa: E402
 import feishu  # noqa: E402
 import llm  # noqa: E402
 import main  # noqa: E402
+import store  # noqa: E402
 
 
 def _item(title, summary="一段摘要", link="", kind="news"):
@@ -132,8 +139,25 @@ class TestParseJson(unittest.TestCase):
     def test_surrounding_prose(self):
         raw = '好的，结果如下：[{"id": 1}] 就这样'
         parsed = llm._parse_json(raw)
-        # 抠出来的可能是对象也可能是数组，这里断言 id 取得到
-        self.assertEqual(parsed["id"] if isinstance(parsed, dict) else parsed[0]["id"], 1)
+        # 数组必须保持数组：变成 dict 会让 _score_map 判非法，整天报废
+        self.assertIsInstance(parsed, list)
+        self.assertEqual(parsed[0]["id"], 1)
+
+    def test_prose_wrapped_multi_item_array(self):
+        raw = '结果如下：[{"id": 1, "stars": 5}, {"id": 2, "stars": 4}] 完毕'
+        parsed = llm._parse_json(raw)
+        self.assertIsInstance(parsed, list)
+        self.assertEqual(len(parsed), 2)
+
+    def test_prose_with_bracket_noise(self):
+        raw = '见 [1]：[{"id": 1, "stars": 5}]'
+        parsed = llm._parse_json(raw)
+        self.assertIsInstance(parsed, list)
+        self.assertEqual(parsed[0]["id"], 1)
+
+    def test_prose_wrapped_object_still_parses(self):
+        raw = '只找到这一条：{"id": 1, "stars": 5}'
+        self.assertEqual(llm._parse_json(raw)["id"], 1)
 
     def test_invalid_raises_value_error(self):
         with self.assertRaises(ValueError):
@@ -433,6 +457,77 @@ class TestCleanToolTitle(unittest.TestCase):
 
     def test_plain_title_unchanged(self):
         self.assertEqual(api_fetcher._clean_tool_title("普通标题"), "普通标题")
+
+
+class _TempDBMixin:
+    """把 store.DB_PATH 指到临时目录，测试不碰真实的 data/seen.db。"""
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        patcher = mock.patch.object(store, "DB_PATH", Path(tmp.name) / "seen.db")
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+
+class TestEmptyNotice(_TempDBMixin, unittest.TestCase):
+    def test_first_notice_not_recorded(self):
+        self.assertFalse(store.notified_empty_today())
+        store.mark_notified_empty()
+        self.assertTrue(store.notified_empty_today())
+
+    def test_mark_twice_is_idempotent(self):
+        store.mark_notified_empty()
+        store.mark_notified_empty()
+        self.assertTrue(store.notified_empty_today())
+
+    def test_empty_notice_does_not_finish_the_day(self):
+        # 只压空通知，不能锁住当天：后面触发点拿到新条目时仍要能正常推
+        store.mark_notified_empty()
+        self.assertFalse(store.finished_today())
+
+
+class TestEmptyNoticeOncePerDay(_TempDBMixin, unittest.TestCase):
+    def test_three_triggers_send_one_notice(self):
+        calls = []
+        with (
+            mock.patch.object(main.rss_fetcher, "fetch_all", return_value=[]),
+            mock.patch.object(main.api_fetcher, "fetch_aggregator", return_value=[]),
+            mock.patch.object(main.api_fetcher, "fetch_tools", return_value=[]),
+            mock.patch.object(main.feishu, "notify_empty", side_effect=calls.append),
+            mock.patch.object(sys, "argv", ["main.py"]),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            for _ in range(3):
+                main.main()
+        self.assertEqual(len(calls), 1)
+
+
+def _load_notify_failure():
+    path = os.path.join(_ROOT, "tools", "notify_failure.py")
+    spec = importlib.util.spec_from_file_location("notify_failure", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class TestNotifyFailure(unittest.TestCase):
+    def setUp(self):
+        self.module = _load_notify_failure()
+
+    def test_sign_matches_feishu(self):
+        # 两处实现必须一致，否则正式推送带签、告警不带签，告警会被飞书拒
+        self.assertEqual(
+            self.module._sign("1700000000", "s3cret"),
+            feishu._sign("1700000000", "s3cret"),
+        )
+
+    def test_missing_webhook_is_skipped(self):
+        with (
+            mock.patch.dict(os.environ, {"FEISHU_WEBHOOK_URL": ""}),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            self.assertEqual(self.module.main(), 0)
 
 
 if __name__ == "__main__":
