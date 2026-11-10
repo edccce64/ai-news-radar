@@ -13,6 +13,11 @@ on:
     - cron: '27 1 * * *'
     - cron: '47 1 * * *'
   workflow_dispatch:       # 第三方定时服务也走这个入口触发
+    inputs:
+      dry_run:
+        description: '只跑不推送、不写库（改完代码后的试跑用）'
+        type: boolean
+        default: false
 
 # dispatch（cron-job.org）与 schedule 可能并发：两个 job 各自 checkout 到同一份旧
 # seen.db，去重双双失效。串行化后，后来的排到时 checkout 能拿到前一个已 push 的新库。
@@ -50,7 +55,8 @@ jobs:
           fi
 
       - name: Run digest
-        run: python main.py
+        # 定时触发时 github.event.inputs 为空，表达式取空串，等价于 python main.py
+        run: python main.py ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
         env:
           LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
