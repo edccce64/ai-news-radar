@@ -176,10 +176,12 @@ class TestRedact(unittest.TestCase):
         self.assertNotIn("sk-testkey-12345678", out)
         self.assertIn("***", out)
 
-    def test_short_values_not_masked(self):
+    def test_short_values_are_masked(self):
+        # 密钥再短也是密钥；设长度门槛等于给短密钥开后门
         with mock.patch.dict(os.environ, {"DEEPSEEK_API_KEY": "short"}):
             out = llm._redact("值是 short")
-        self.assertIn("short", out)
+        self.assertNotIn("short", out)
+        self.assertIn("***", out)
 
     def test_base_url_with_credentials_masked(self):
         with mock.patch.dict(os.environ, {"MIMO_BASE_URL": "https://u:p@host/v1"}):
@@ -509,6 +511,53 @@ def _load_notify_failure():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+class TestPrunePushed(_TempDBMixin, unittest.TestCase):
+    def test_old_rows_removed(self):
+        import sqlite3
+
+        store.mark_pushed([{"link": "https://x/old", "title": "旧", "source": "s"}])
+        store.mark_pushed([{"link": "https://x/new", "title": "新", "source": "s"}])
+        conn = sqlite3.connect(store.DB_PATH)
+        conn.execute(
+            "UPDATE pushed SET pushed_at = '2000-01-01T00:00:00' WHERE link = ?",
+            ("https://x/old",),
+        )
+        conn.commit()
+        conn.close()
+
+        self.assertEqual(store.prune_pushed(30), 1)
+        remaining = store.filter_unpushed([{"link": "https://x/old"}, {"link": "https://x/new"}])
+        self.assertEqual([i["link"] for i in remaining], ["https://x/old"])
+
+
+class TestWebhookMissing(unittest.TestCase):
+    def test_missing_url_raises_readable_error(self):
+        with (
+            mock.patch.dict(os.environ, {"FEISHU_WEBHOOK_URL": ""}),
+            self.assertRaises(SystemExit) as ctx,
+        ):
+            feishu._post({"msg_type": "text"})
+        self.assertIn("FEISHU_WEBHOOK_URL", str(ctx.exception))
+
+
+class TestClientCache(unittest.TestCase):
+    def setUp(self):
+        llm._client = None
+        llm._client_provider = None
+        llm._client_model = None
+        self.addCleanup(setattr, llm, "_client", None)
+
+    def test_client_is_reused(self):
+        env = {"LLM_PROVIDER": "deepseek", "DEEPSEEK_API_KEY": "k"}
+        with (
+            mock.patch.dict(os.environ, env),
+            mock.patch.object(llm, "OpenAI", return_value=object()) as factory,
+        ):
+            llm._get_client_and_model()
+            llm._get_client_and_model()
+        self.assertEqual(factory.call_count, 1)
 
 
 class TestNotifyFailure(unittest.TestCase):

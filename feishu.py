@@ -180,6 +180,14 @@ def build_cards(title, news_entries, tool_entries) -> tuple[list[dict], list[lis
     return cards, [entries for _, entries in groups]
 
 
+def _webhook_url() -> str:
+    """取 webhook 地址。缺了给可读提示，而不是裸 KeyError traceback。"""
+    url = os.environ.get("FEISHU_WEBHOOK_URL", "").strip()
+    if not url:
+        raise SystemExit("缺少环境变量 FEISHU_WEBHOOK_URL，请检查 .env 或 GitHub Secrets")
+    return url
+
+
 def _post(payload):
     """发一张卡片。
 
@@ -188,8 +196,9 @@ def _post(payload):
     直接 raise_for_status() 会把凭据打进终端、Actions 日志、还有你贴给别人排错的聊天记录。
     所以这里只报异常类型名、HTTP 状态码和响应体，永远不拼 URL。
     """
+    url = _webhook_url()
     try:
-        resp = requests.post(os.environ["FEISHU_WEBHOOK_URL"], json=payload, timeout=TIMEOUT)
+        resp = requests.post(url, json=payload, timeout=TIMEOUT)
     except requests.RequestException as exc:
         raise SystemExit(f"飞书请求失败：{type(exc).__name__}") from None
     if resp.status_code != 200:

@@ -23,36 +23,55 @@ _SECRET_ENV = ("DEEPSEEK_API_KEY", "MIMO_API_KEY", "FEISHU_SECRET")
 
 
 def _redact(text):
-    """把环境变量里的敏感值从文本里抹掉，避免随异常进日志。"""
+    """把环境变量里的敏感值从文本里抹掉，避免随异常进日志。
+
+    不设长度门槛：这几个变量里放的都是密钥，再短也是密钥。
+    MIMO_BASE_URL 例外——它是地址，只在内嵌了 user:pass@ 时才抹。
+    """
     s = str(text)
     for name in _SECRET_ENV:
         val = os.environ.get(name, "")
-        if len(val) >= 8:
+        if val:
             s = s.replace(val, "***")
     base = os.environ.get("MIMO_BASE_URL", "")
-    # 只在 URL 内嵌了 user:pass@ 时才脱敏，正常 base_url 保留，方便排查
-    if len(base) >= 8 and "@" in base:
+    if base and "@" in base:
         s = s.replace(base, "***")
     return s
 
 
+_client = None
+_client_provider = None
+_client_model = None
+
+
 def _get_client_and_model():
-    """按 LLM_PROVIDER 造 client 与模型名。"""
+    """按 LLM_PROVIDER 造 client 与模型名。**client 复用**，不为每条内容新建。
+
+    一天约 26 次调用，每次新建 client 等于放弃连接复用，纯浪费。
+    """
+    global _client, _client_provider, _client_model
     provider = os.environ.get("LLM_PROVIDER", "").strip().lower()
+    if _client is not None and provider == _client_provider:
+        return _client, _client_model
+
     if provider == "deepseek":
-        return (
+        client, model = (
             OpenAI(api_key=_need_key("DEEPSEEK_API_KEY"), base_url=DEEPSEEK_BASE_URL),
             DEEPSEEK_MODEL,
         )
-    if provider == "mimo":
-        return (
+    elif provider == "mimo":
+        client, model = (
             OpenAI(
                 api_key=_need_key("MIMO_API_KEY"),
                 base_url=_need_key("MIMO_BASE_URL"),
             ),
             _need_key("MIMO_MODEL"),
         )
-    raise SystemExit(f"未知 LLM_PROVIDER: {provider or '(未设置)'}（支持 deepseek / mimo）")
+    else:
+        raise SystemExit(f"未知 LLM_PROVIDER: {provider or '(未设置)'}（支持 deepseek / mimo）")
+
+    _client, _client_provider, _client_model = client, provider, model
+    return client, model
 
 
 def _need_key(name):

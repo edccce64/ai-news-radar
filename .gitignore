@@ -9,7 +9,10 @@ __pycache__/
 *.pyc
 *.egg-info/
 
-# SQLite 侧文件（主库 data/seen.db 是要提交的，-wal/-shm 不是）
+# 去重状态库：不进 master，由 Actions 保存到独立的 state 分支
+data/seen.db
+
+# SQLite 侧文件
 *.db-wal
 *.db-shm
 *.db-journal

@@ -259,7 +259,11 @@ GitHub 自带的 `schedule` **不可靠**：官方只承诺「最多延迟 15 �
 gh workflow run daily.yml -R <owner>/<repo>
 ```
 
-跑挂了会**自动往飞书群发一条告警**。
+跑挂了会**自动往飞书群发一条告警**（带签名，开了签名校验也能送达）。
+
+> **状态库在独立分支**：`data/seen.db` 不进 `master`，由 workflow 写到 `state` 分支。
+> 该分支每次被强制覆盖成单个提交，所以它不会越积越长。首次运行时 `state` 分支还不存在，
+> 会从空状态库开始。仓库里看不到每天一次的 `chore: update seen state` 提交。
 
 ---
 
@@ -278,7 +282,7 @@ gh workflow run daily.yml -R <owner>/<repo>
 | `main.py` | 编排全流程，`--dry-run` |
 | `tests/test_core.py` | 核心逻辑单测（标准库 unittest，无需额外依赖） |
 | `tools/notify_failure.py` | Actions 跑挂时的飞书告警，与正式推送同一套签名 |
-| `data/seen.db` | 状态库，**commit 回仓库**（Actions 跨次去重靠它） |
+| `data/seen.db` | 去重状态库，**不入 master**；Actions 每次运行从 `state` 分支取，跑完写回 |
 
 **配置与文档**
 

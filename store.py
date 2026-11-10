@@ -2,6 +2,8 @@ import datetime
 import sqlite3
 from pathlib import Path
 
+from config import PUSHED_RETENTION_DAYS
+
 DB_PATH = Path(__file__).parent / "data" / "seen.db"
 
 
@@ -147,6 +149,25 @@ def mark_notified_empty() -> None:
             (today_bj(), _now()),
         )
         conn.commit()
+    finally:
+        conn.close()
+
+
+def prune_pushed(days=PUSHED_RETENTION_DAYS) -> int:
+    """删掉 N 天前的去重记录，返回删除条数。
+
+    候选只来自 PUBDATE_DAYS（2 天）窗口，30 天前的 link 永远不会再被匹配到。
+    不清理的话 seen.db 每天增长，仓库与 Actions 拉取都会越来越慢。
+    """
+    cutoff = (
+        datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
+        - datetime.timedelta(days=days)
+    ).isoformat(timespec="seconds")
+    conn = _connect()
+    try:
+        cursor = conn.execute("DELETE FROM pushed WHERE pushed_at < ?", (cutoff,))
+        conn.commit()
+        return cursor.rowcount
     finally:
         conn.close()
 

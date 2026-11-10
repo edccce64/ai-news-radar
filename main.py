@@ -207,7 +207,8 @@ def main() -> None:
     # 不是「今天推过没有」，所以中途失败当天仍能补发剩余卡）
     feishu.send_all(cards, on_sent=lambda i: store.mark_pushed(card_entries[i]))
     store.mark_finished()
-    print(f"[OK] 已推送 {len(kept)} 条并写入 SQLite")
+    removed = store.prune_pushed()
+    print(f"[OK] 已推送 {len(kept)} 条并写入 SQLite（清理 {removed} 条过期记录）")
 
 
 if __name__ == "__main__":

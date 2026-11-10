@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write          # 允许回写 data/seen.db
+  contents: write          # 允许推送状态库到 state 分支
 
 jobs:
   push:
@@ -38,6 +38,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # 状态库放独立 state 分支：master 不再每天多一个 bot 提交。
+      - name: Restore seen state
+        run: |
+          mkdir -p data
+          if git fetch --depth=1 origin state 2>/dev/null; then
+            git show FETCH_HEAD:data/seen.db > data/seen.db
+            echo "已从 state 分支恢复状态库"
+          else
+            echo "state 分支不存在，本次从空状态库开始"
+          fi
+
       - name: Run digest
         run: python main.py
         env:
@@ -51,16 +62,21 @@ jobs:
           # GitHub Search API 拿 AI 热门仓库用。Actions 自动提供，无需用户配置。
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Commit seen state
+      - name: Save seen state
         run: |
+          if [ ! -f data/seen.db ]; then
+            echo "没有状态库，跳过"
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # 用 -A 而不是精确路径：库里没有 data/seen.db 时（首次运行或历史被清理过），
-          # 精确路径的 git add 会直接报错，把整个工作流带崩。
-          # .gitignore 已排除 *.db-wal / *.db-shm 等侧文件，这里不会带进脏文件。
-          git add -A data/
-          git diff --cached --quiet || git commit -m "chore: update seen state"
-          git push
+          # 孤儿分支 + 强制推送：state 分支永远只有 1 个提交，不会无限增长。
+          # data/seen.db 在 .gitignore 里，必须 -f 才加得进去。
+          git checkout --orphan state-tmp
+          git rm -r --cached -q .
+          git add -f data/seen.db
+          git commit -m "chore: update seen state"
+          git push --force origin state-tmp:state
 
       # 定时任务没人盯，挂了必须让你知道，否则会静默漏推好几天。
       # 走项目脚本而不是 curl：机器人开了签名校验时，裸 curl 会被飞书拒收（19021）。
